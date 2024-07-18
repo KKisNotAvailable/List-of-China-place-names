@@ -8,10 +8,15 @@ import os
 # [pytesseract requirement]
 # get tesseract-ocr from github:# https://github.com/UB-Mannheim/tesseract/wiki
 # pytesseract is just a python wrapper of tesseract-ocr
+# and just specify where to find tesseract.exe, don't need to add that in PATH
+pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
 
 # [pdf2image requirement]
-# https://poppler.freedesktop.org/
-
+# https://poppler.freedesktop.org/ is the official site
+# but for python you have to get the binary compiled files from
+# https://github.com/oschwartz10612/poppler-windows
+# and specifies the poppler path when calling "convert_from_path"
+POPPLER_PATH = "D:\\User_Data\\Desktop\\研究資料\\external_tools\\poppler-24.02.0\\Library\\bin\\"
 
 
 class PDF_extractor():
@@ -37,7 +42,10 @@ class PDF_extractor():
     # Function to process a batch of pages as images
     def process_per_batch(self, start: int, end: int, batch_number: int) -> None:
         # Convert a range of pages to images
-        images = convert_from_path(self.pdf_path, first_page=start, last_page=end, dpi=200)
+        images = convert_from_path(
+            self.pdf_path, first_page=start, last_page=end, dpi=200, 
+            poppler_path=POPPLER_PATH
+        )
 
         # Perform OCR on each image after preprocessing
         for i, image in enumerate(images):
@@ -45,15 +53,15 @@ class PDF_extractor():
             image = self.pdf_to_image(image)
 
             # Perform OCR using pytesseract
-            text = pytesseract.image_to_string(image)
+            text = pytesseract.image_to_string(image, lang='eng+chi_tra')
 
             # Save the text in a file
-            text_file_path = f'/content/batch_texts/batch_{batch_number}_page_{start + i}.txt'
-            with open(text_file_path, 'w') as file:
+            text_file_path = f'.\\content\\batch_texts\\batch_{batch_number}_page_{start + i}.txt'
+            with open(text_file_path, 'w', encoding="utf_8_sig") as file:
                 file.write(text)
 
             # Save the image
-            image_file_path = f'/content/batch_images/batch_{batch_number}_page_{start + i}.png'
+            image_file_path = f'.\\content\\batch_images\\batch_{batch_number}_page_{start + i}.png'
             image.save(image_file_path)
 
         # Clear the images list to free up memory
