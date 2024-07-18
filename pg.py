@@ -10,6 +10,8 @@ import os
 # pytesseract is just a python wrapper of tesseract-ocr
 # and just specify where to find tesseract.exe, don't need to add that in PATH
 pytesseract.pytesseract.tesseract_cmd = "C:\\Program Files\\Tesseract-OCR\\tesseract.exe"
+#shows the languages supported
+# print(pytesseract.get_languages(config='.'))
 
 # [pdf2image requirement]
 # https://poppler.freedesktop.org/ is the official site
@@ -53,7 +55,7 @@ class PDF_extractor():
             image = self.pdf_to_image(image)
 
             # Perform OCR using pytesseract
-            text = pytesseract.image_to_string(image, lang='eng+chi_tra')
+            text = pytesseract.image_to_string(image, lang='eng+chi_tra+chi_sim')
 
             # Save the text in a file
             text_file_path = f'.\\content\\batch_texts\\batch_{batch_number}_page_{start + i}.txt'
