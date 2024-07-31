@@ -57,17 +57,22 @@ def analysis(df: pd.DataFrame):
 
     # for scatter plot, ignore NaNs. 
     # But need to report the total count and Na counts.
-    df_to_plot = df.loc[df['portcode'] == 195, ['year', 'pay']].reset_index(drop=True)
+    for cur_port, _ in top_ports:
+        df_to_plot = df.loc[df['portcode'] == cur_port, ['year', 'pay']].reset_index(drop=True)
 
+        # year_count = df_to_plot.groupby(by='year').size().reset_index(name='counts')
+        # job_count = df_to_plot.groupby(by='rank').size().reset_index(name='counts')
 
-    # https://ithelp.ithome.com.tw/articles/10211370
-    plt.scatter(
-        df_to_plot['year'].astype("int"),
-        df_to_plot['pay']
-    )
+        # https://ithelp.ithome.com.tw/articles/10211370
+        plt.scatter(
+            df_to_plot['year'].astype("int"),
+            df_to_plot['pay']
+        )
+        ttl = f'{cur_port}_year_wage_scatter'
+        plt.title(ttl)
 
-    plt.savefig("books/test.jpg")
-    plt.close() 
+        plt.savefig(f"graphs/{ttl}.jpg")
+        plt.close() 
 
     return
 
